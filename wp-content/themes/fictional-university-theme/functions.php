@@ -20,6 +20,12 @@ function university_fetures(): void
 
 function university_ajust_queries($query): void
 {
+    if(!is_admin() && is_post_type_archive('program') && $query->is_main_query()) {
+        $query->set('orderby', 'title');
+        $query->set('order', 'ASC');
+        $query->set('posts_per_page', -1);  // no pagination, shows all items on one page
+    }
+
     if(!is_admin() && is_post_type_archive('event') && $query->is_main_query()) {
         $query->set('meta_key', 'event_date');
         $query->set('orderby', 'meta_value_num');
