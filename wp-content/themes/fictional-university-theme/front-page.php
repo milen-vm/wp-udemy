@@ -18,18 +18,30 @@
 
             <?php
             $homePageEvents = new WP_Query([
-                'posts_per_page' => 2,
+                'posts_per_page' => -1,
                 'post_type' => 'event',
+                'meta_key' => 'event_date',
+                'orderby' => 'meta_value_num',
+                'order' => 'ASC',
+                'meta_query' => [
+                    [
+                        'key' => 'event_date',
+                        'compare' => '>=',
+                        'value' => date('Ymd'),
+                        'type' => 'numeric',
+                    ],
+                ],
             ]);
 
             while($homePageEvents->have_posts()):
                 $homePageEvents->the_post();
+                $eventDate = new DateTime(get_field('event_date'));
             ?>
 
                 <div class="event-summary">
                     <a class="event-summary__date t-center" href="<?php the_permalink(); ?>">
-                        <span class="event-summary__month"><?php the_time('M'); ?></span>
-                        <span class="event-summary__day"><?php the_time( 'd'); ?></span>
+                        <span class="event-summary__month"><?php echo $eventDate->format('M'); ?></span>
+                        <span class="event-summary__day"><?php echo $eventDate->format('d'); ?></span>
                     </a>
                     <div class="event-summary__content">
                         <h5 class="event-summary__title headline headline--tiny"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h5>
