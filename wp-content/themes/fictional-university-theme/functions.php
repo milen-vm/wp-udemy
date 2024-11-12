@@ -18,9 +18,26 @@ function university_fetures(): void
     register_nav_menu('footerLoacationTwo', 'Footer Location Two');
 }
 
+function university_ajust_queries($query): void
+{
+    if(!is_admin() && is_post_type_archive('event') && $query->is_main_query()) {
+        $query->set('meta_key', 'event_date');
+        $query->set('orderby', 'meta_value_num');
+        $query->set('order', 'ASC');
+        $query->set('meta_query',[
+            'key' => 'event_date',
+            'compare' => '>=',
+            'value' => date('Ymd'),
+            'type' => 'numeric',
+        ]);
+    }
+}
+
 add_action('wp_enqueue_scripts', 'university_files');;
 
 add_action('after_setup_theme', 'university_fetures');
+
+add_action('pre_get_posts', 'university_ajust_queries');
 
 /** custom user functions */
 

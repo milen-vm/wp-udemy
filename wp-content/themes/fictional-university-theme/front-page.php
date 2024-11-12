@@ -18,7 +18,7 @@
 
             <?php
             $homePageEvents = new WP_Query([
-                'posts_per_page' => -1,
+                'posts_per_page' => 2,
                 'post_type' => 'event',
                 'meta_key' => 'event_date',
                 'orderby' => 'meta_value_num',
