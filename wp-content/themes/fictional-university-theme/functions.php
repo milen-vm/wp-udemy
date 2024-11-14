@@ -9,9 +9,17 @@ function university_files(): void
     wp_enqueue_style('university_extra_styles', get_theme_file_uri('/build/index.css'));
 }
 
+/**
+ * Features that custom wordpress theme can support.
+ * 
+ * @return void
+ */
 function university_fetures(): void
 {
     add_theme_support('title-tag');
+    add_theme_support('post-thumbnails');   // feature image for custom post type in the editor
+    add_image_size('professorLandscape', 400, 260, true);   // create custom size for uplouded images
+    add_image_size('professorPortrait', 480, 650, true);    // use plugin to recreate old uploaded images - "Regenerate Thumbnails"
 
     register_nav_menu('headerMenuLocation', 'Header Menu Location');
     register_nav_menu('footerLoacationOne', 'Footer Location One');

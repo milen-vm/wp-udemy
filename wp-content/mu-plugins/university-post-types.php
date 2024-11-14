@@ -2,17 +2,22 @@
 
 function university_post_types()
 {
+    /**
+     * After every new post type permalinks must be updated.
+     * In Wordpress admin Setings/Permalinks click "Save"
+     */
+
     // Event post type
     register_post_type('event', [
         'supports' => [
-            'title', 'editor', 'excerpt',
+            'title', 'editor', 'excerpt',       // supported fields, excerpt - short description field of the post
         ],
         'rewrite' => [
-            'slug' => 'events',
+            'slug' => 'events',     // rewrite url for archive page
         ],
-        'has_archive' => true,
+        'has_archive' => true,      // alows archive list page for this post type
         'public' => true,
-        'show_in_rest' => true,
+        'show_in_rest' => true,     // used for WP REST request to the server
         'labels' => [
             'name' => 'Events',
             'add_new_item' => 'Add New Event',
@@ -41,7 +46,24 @@ function university_post_types()
             'all_items' => 'All Programs',
             'singular_name' => 'Program',
         ],
-        'menu_icon' => 'dashicons-awards',    // WordPress Dashicons - developer.wordpress.org
+        'menu_icon' => 'dashicons-awards',
+    ]);
+
+    // Professor post type
+    register_post_type('professor', [
+        'supports' => [
+            'title', 'editor', 'thumbnail',     // thumbnail - feature image for custom post type in the editor
+        ],
+        'public' => true,
+        'show_in_rest' => true,
+        'labels' => [
+            'name' => 'Professors',
+            'add_new_item' => 'Add New Professor',
+            'edit_item' => 'Edit Professor',
+            'all_items' => 'All Professors',
+            'singular_name' => 'Professor',
+        ],
+        'menu_icon' => 'dashicons-welcome-learn-more',
     ]);
 }
 
