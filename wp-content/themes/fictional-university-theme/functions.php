@@ -18,8 +18,10 @@ function university_fetures(): void
 {
     add_theme_support('title-tag');
     add_theme_support('post-thumbnails');   // feature image for custom post type in the editor
+
     add_image_size('professorLandscape', 400, 260, true);   // create custom size for uplouded images
     add_image_size('professorPortrait', 480, 650, true);    // use plugin to recreate old uploaded images - "Regenerate Thumbnails"
+    add_image_size('pageBanner', 1500, 300, true);
 
     register_nav_menu('headerMenuLocation', 'Header Menu Location');
     register_nav_menu('footerLoacationOne', 'Footer Location One');
@@ -64,4 +66,46 @@ function get_page_ID_by_slug(string $slug): int|null
     }
 
     return null;
+}
+
+/**
+ * Page banner template.
+ * 
+ * @return void
+ */
+function pageBanner(string $title = '', string $subtitle = '', string $background = ''): void
+{
+    if(empty($background)) {
+        $image = get_field('page_banner_background_image');
+
+        if(
+            is_array($image) &&
+            isset($image['sizes']) &&
+            $image['sizes']['pageBanner']
+        ) {
+            $background = $image['sizes']['pageBanner'];
+        } else {
+            $background = get_theme_file_uri('/images/ocean.jpg');
+        }
+    }
+
+    if(empty($title)) {
+        $title = get_the_title();
+    }
+
+    if(empty($subtitle)) {
+        $subtitle = get_field('page_banner_subtitle');
+    }
+?>
+    <div class="page-banner">
+        <div class="page-banner__bg-image"
+            style="background-image: url(<?php echo $background; ?>)"></div>
+        <div class="page-banner__content container container--narrow">
+            <h1 class="page-banner__title"><?php echo $title; ?></h1>
+            <div class="page-banner__intro">
+                <p><?php echo $subtitle; ?></p>
+            </div>
+        </div>
+    </div>
+<?php
 }
