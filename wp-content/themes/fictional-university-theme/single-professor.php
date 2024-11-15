@@ -1,8 +1,9 @@
-<?php get_header() ?>
+<?php
+get_header();
+pageBanner();
 
-<?php while(have_posts()) :
+while(have_posts()) :
     the_post();
-    pageBanner();
 ?>
     <div class="container container--narrow page-section">
         <div class="generic-content">

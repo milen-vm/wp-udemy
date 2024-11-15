@@ -79,6 +79,8 @@ function pageBanner(string $title = '', string $subtitle = '', string $backgroun
         $image = get_field('page_banner_background_image');
 
         if(
+            !is_archive() &&
+            !is_home() &&
             is_array($image) &&
             isset($image['sizes']) &&
             $image['sizes']['pageBanner']
