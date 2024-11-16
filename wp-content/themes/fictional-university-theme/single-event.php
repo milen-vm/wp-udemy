@@ -5,7 +5,6 @@ pageBanner();
 while(have_posts()) :
     the_post();
 ?>
-
     <div class="container container--narrow page-section">
         <div class="metabox metabox--position-up metabox--with-home-link">
             <p>
@@ -21,7 +20,7 @@ while(have_posts()) :
             <?php the_content(); ?>
         </div>
         <?php
-        $relatedPrograms = get_field('relalted_programs'); var_dump($relatedPrograms);
+        $relatedPrograms = get_field('relalted_programs');
         if($relatedPrograms) : ?>
             <hr class="section-break">
             <h2 class="headline headline--medium">Related Program(s)</h2>
@@ -34,7 +33,6 @@ while(have_posts()) :
             </ul>
         <?php endif ?>
     </div>
-
 <?php endwhile ?>
 
 <?php get_footer(); ?>
