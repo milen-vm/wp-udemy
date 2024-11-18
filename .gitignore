@@ -23,6 +23,8 @@ wp-config.php
 # Example themes
 /wp-content/themes/*
 !/wp-content/themes/fictional-university-theme/
+/wp-content/themes/fictional-university-theme/node_modules/
+/wp-content/themes/fictional-university-theme/bild/*
 
 # Example plugin
 /wp-content/plugins/*

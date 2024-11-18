@@ -1,3 +1,4 @@
+// Wordpress js package handles scss files, in build folder they are converted to css.
 import "../css/style.scss"
 
 // Our modules / classes
