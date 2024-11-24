@@ -1,21 +1,20 @@
 <?php
 get_header();
-pageBanner('All Programs', 'There is something for everyone. Have a look around');
+pageBanner('Our Campuses', 'We have several conveniently located campuses.');
 ?>
 
 <div class="container container--narrow page-section">
-    <ul class="link-list min-list">
+    <div class="acf-map">
         <?php    
         while(have_posts()):
             the_post();
         ?>
 
-            <li>
-                <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-            </li>
+            <div class="marker">
+            </div>
 
         <?php endwhile; ?>
-    </ul>
+    </div>
     <?php echo paginate_links(); ?>
 </div>
 

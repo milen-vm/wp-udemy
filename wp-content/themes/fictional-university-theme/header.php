@@ -15,6 +15,7 @@
             <i class="site-header__menu-trigger fa fa-bars" aria-hidden="true"></i>
             <div class="site-header__menu group">
                 <nav class="main-navigation">
+                    <!-- Admin menu location. -->
                     <!-- <?php wp_nav_menu([
                         'theme_location' => 'headerMenuLocation',
                     ]); ?> -->
@@ -41,7 +42,12 @@
                         >
                             <a href="<?php echo get_post_type_archive_link('event'); ?>">Events</a>
                         </li>
-                        <li><a href="#">Campuses</a></li>
+                        <li <?php
+                            echo get_post_type() === 'campus' ? 'class="current-menu-item"' : '';
+                            ?>
+                        >
+                            <a href="<?php echo get_post_type_archive_link('campus'); ?>">Campuses</a>
+                        </li>
                         <li <?php echo get_post_type() === 'post' ? 'class="current-menu-item"' : ''; ?>>
                             <a href="<?php echo site_url('/blog'); ?>">Blog</a>
                         </li>
