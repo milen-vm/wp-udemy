@@ -11,6 +11,7 @@ pageBanner('Our Campuses', 'We have several conveniently located campuses.');
         ?>
 
             <div class="marker">
+                <?php echo '<pre>' . print_r(get_field('map_location'), true); ?>
             </div>
 
         <?php endwhile; ?>
@@ -18,4 +19,4 @@ pageBanner('Our Campuses', 'We have several conveniently located campuses.');
     <?php echo paginate_links(); ?>
 </div>
 
-<?php get_footer(); ?>  
+<?php // get_footer(); ?>  
