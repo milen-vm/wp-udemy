@@ -2,6 +2,9 @@
 
 function university_files(): void
 {
+    wp_enqueue_style('osm-styles', '//unpkg.com/leaflet@1.9.4/dist/leaflet.css');
+    // Make sure you put js script AFTER Leaflet's CSS
+    wp_enqueue_script('osm-leaflet-js-script', '//unpkg.com/leaflet@1.9.4/dist/leaflet.js', ['jquery']);
     /**
      * The script version ('ver' param) is needed to show on brouser that there is new version
      * and must be updated.
