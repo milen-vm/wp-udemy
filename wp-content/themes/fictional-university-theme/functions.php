@@ -37,8 +37,18 @@ function university_fetures(): void
     register_nav_menu('footerLoacationTwo', 'Footer Location Two');
 }
 
+/**
+ * Initial settings for Wordpress default queryes.
+ * 
+ * @param mixed $query
+ * @return void
+ */
 function university_ajust_queries($query): void
 {
+    if(!is_admin() && is_post_type_archive('campus') && $query->is_main_query()) {
+        $query->set('posts_per_page', -1);  // no pagination, shows all items on one page
+    }
+
     if(!is_admin() && is_post_type_archive('program') && $query->is_main_query()) {
         $query->set('orderby', 'title');
         $query->set('order', 'ASC');

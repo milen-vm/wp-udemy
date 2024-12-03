@@ -3,6 +3,10 @@ class OSMap {
     #map = {}
 
     constructor() {
+        if(!document.getElementById('acf-map')) {
+            return;
+        }
+
         this.newMap('acf-map')
         this.addMarker('.marker')
     }
@@ -26,13 +30,20 @@ class OSMap {
                 item.getAttribute('data-lat'),
                 item.getAttribute('data-lng')
             ],
-                marker = L.marker(latLng)
+                marker = L.marker(latLng).addTo(this.#map),
+                popup = item.innerHTML.trim()
 
-            marker.addTo(this.#map)
+            if(popup) {
+                marker.bindPopup(popup)
+            }
+
             markers.push(latLng)
+            item.remove()
         })
 
-        this.#map.fitBounds(markers)
+        if(markers.length > 0) {
+            this.#map.fitBounds(markers)
+        }
     }
 }
 
