@@ -95,16 +95,27 @@ class Search {
     }
 
     getResults() {
-        let url = this.#globalData.root_url + '/wp-json/wp/v2/posts?search=' + this.#searchField.val()
-        $.getJSON(url, (data) => {
+        let baseUrl = this.#globalData.root_url + '/wp-json/wp/v2/'
+
+        $.when(
+            $.getJSON(baseUrl + 'posts?search=' + this.#searchField.val()),
+            $.getJSON(baseUrl + 'pages?search=' + this.#searchField.val()),
+            $.getJSON(baseUrl + 'campus?search=' + this.#searchField.val()),
+            $.getJSON(baseUrl + 'program?search=' + this.#searchField.val()),
+            $.getJSON(baseUrl + 'professor?search=' + this.#searchField.val())
+        ).then((posts, pages, campuses, programs, professors) => {
+            let combined = posts[0].concat(pages[0]).concat(campuses[0]).concat(programs[0]).concat(professors[0])
+
             this.#resultsDiv.html(`
                 <h2 class="search-overlay__section-title">General Information</h2>
-                ${data.length ? '<ul class="link-list min-list">' : '<p>No general information matches that search.</p>'}
-                    ${data.map(item => `<li><a href="${item.link}">${item.title.rendered}</a></li>`).join('')}
-                ${data.length ? '</ul>' : ''}
+                ${combined.length ? '<ul class="link-list min-list">' : '<p>No general information matches that search.</p>'}
+                    ${combined.map(item => `<li><a href="${item.link}">${item.title.rendered}</a></li>`).join('')}
+                ${combined.length ? '</ul>' : ''}
             `)
 
             this.#isSpinnerVisible = false
+        }, () => {
+            this.#resultsDiv.html('<p>Unexpected error. Please try again.</p>')
         })
     }
 
