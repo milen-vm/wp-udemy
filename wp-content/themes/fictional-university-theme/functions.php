@@ -1,5 +1,7 @@
 <?php
 
+require_once get_theme_file_path('/inc/search-route.php');
+
 function university_files(): void
 {
     wp_enqueue_style('osm-styles', '//unpkg.com/leaflet@1.9.4/dist/leaflet.css');
@@ -78,11 +80,28 @@ function university_ajust_queries($query): void
     }
 }
 
+function university_custom_rest(): void
+{
+    /**
+     * First argument is the publication type that will be updated.
+     * Second is the name of the new field.
+     * Third one is an array that describes how to manage this new field.
+     * Function in 'get_callback' returns the value of the new field.
+     */
+    register_rest_field('post', 'authorName', [
+        'get_callback' => function() {
+            return get_the_author();
+        }
+    ]);
+}
+
 add_action('wp_enqueue_scripts', 'university_files');;
 
 add_action('after_setup_theme', 'university_fetures');
 
 add_action('pre_get_posts', 'university_ajust_queries');
+
+add_action('rest_api_init', 'university_custom_rest');
 
 /**
  * Adds Google api key to make working custom map field for Campus post type.
