@@ -95,31 +95,63 @@ class Search {
     }
 
     getResults() {
-        let baseUrl = this.#globalData.root_url + '/wp-json/wp/v2/'
+        let rootUrl = this.#globalData.root_url,
+            url = this.#globalData.root_url + '/wp-json/university/v1/search?term=' + this.#searchField.val()
 
-        $.when(
-            $.getJSON(baseUrl + 'posts?search=' + this.#searchField.val()),
-            $.getJSON(baseUrl + 'pages?search=' + this.#searchField.val()),
-            $.getJSON(baseUrl + 'campus?search=' + this.#searchField.val()),
-            $.getJSON(baseUrl + 'program?search=' + this.#searchField.val()),
-            $.getJSON(baseUrl + 'professor?search=' + this.#searchField.val())
-        ).then((posts, pages, campuses, programs, professors) => {
-            let combined = posts[0].concat(pages[0]).concat(campuses[0]).concat(programs[0]).concat(professors[0])
-
+        $.getJSON(url, (data) => {
             this.#resultsDiv.html(`
-                <h2 class="search-overlay__section-title">General Information</h2>
-                ${combined.length ? '<ul class="link-list min-list">' : '<p>No general information matches that search.</p>'}
-                    ${combined.map(item => `
-                        <li>
-                            <a href="${item.link}">${item.title.rendered}</a>${item.type === 'post' ? ` by ${item.authorName}` : ''}
-                        </li>
-                    `).join('')}
-                ${combined.length ? '</ul>' : ''}
+                <div class="row">
+                    <div class="one-third">
+                        <h2 class="search-overlay__section-title">General Information</h2>
+                        ${data.generalInfo.length ? '<ul class="link-list min-list">' : '<p>No general information matches that search.</p>'}
+                            ${data.generalInfo.map(item => `
+                                <li>
+                                    <a href="${item.permalink}">${item.title}</a>${item.postType === 'post' ? ` by ${item.authorName}` : ''}
+                                </li>
+                            `).join('')}
+                        ${data.generalInfo.length ? '</ul>' : ''}
+                    </div>
+                    <div class="one-third">
+                        <h2 class="search-overlay__section-title">Programs</h2>
+                        ${data.programs.length ?
+                            '<ul class="link-list min-list">' :
+                            `<p>No programs matche that search. <a href="${rootUrl}/programs">View all programs.</a></p>`}
+                            ${data.programs.map(item => `
+                                <li>
+                                    <a href="${item.permalink}">${item.title}</a>
+                                </li>
+                            `).join('')}
+                        ${data.programs.length ? '</ul>' : ''}
+
+                        <h2 class="search-overlay__section-title">Professors</h2>
+                    </div>
+                    <div class="one-third">
+                        <h2 class="search-overlay__section-title">Campuses</h2>
+                        ${data.campuses.length ?
+                            '<ul class="link-list min-list">' :
+                            `<p>No campuses matche that search. <a href="${rootUrl}/campuses">View all campuses.</a></p>`}
+                            ${data.campuses.map(item => `
+                                <li>
+                                    <a href="${item.permalink}">${item.title}</a>
+                                </li>
+                            `).join('')}
+                        ${data.campuses.length ? '</ul>' : ''}
+
+                        <h2 class="search-overlay__section-title">Events</h2>
+                        
+                    </div>
+                </div>    
             `)
 
             this.#isSpinnerVisible = false
+        })
+        return
+        $.when(
+            // do several asinc actions
+        ).then((resultOne, resultTwo, etc) => {
+            // do something with the results
         }, () => {
-            this.#resultsDiv.html('<p>Unexpected error. Please try again.</p>')
+            // do something on error
         })
     }
 

@@ -48,6 +48,8 @@ function universitySearchResults($data): array
         array_push($results[$key], [
             'title' => get_the_title(),
             'permalink' => get_the_permalink(),
+            'postType' => $postType,
+            'authorName' => get_the_author(),
         ]);
     }
 
