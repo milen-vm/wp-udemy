@@ -33,24 +33,31 @@ function universitySearchResults($data): array
 
         $key = '';
         $postType = get_post_type();
+        $data = [
+            'title' => get_the_title(),
+            'permalink' => get_the_permalink(),
+            'postType' => $postType,
+        ];
+
         if($postType === 'post' || $postType === 'page') {
             $key = 'generalInfo';
+            $data['authorName'] = get_the_author();
         } elseif ($postType === 'professor') {
             $key = 'professors';
+            $data['image'] = get_the_post_thumbnail_url(null,'professorLandscape');
         } elseif ($postType === 'program') {
             $key = 'programs';
         } elseif ($postType === 'event') {
             $key = 'events';
+            $eventDate = new DateTime(get_field('event_date'));
+            $data['month'] = $eventDate->format('M');
+            $data['day'] = $eventDate->format('d');
+            $data['description'] = has_excerpt() ? get_the_excerpt() : wp_trim_words(get_the_content(), 17);
         } elseif($postType === 'campus') {
             $key = 'campuses';
         }
 
-        array_push($results[$key], [
-            'title' => get_the_title(),
-            'permalink' => get_the_permalink(),
-            'postType' => $postType,
-            'authorName' => get_the_author(),
-        ]);
+        array_push($results[$key], $data);
     }
 
     return $results;
