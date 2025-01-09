@@ -16,7 +16,9 @@ while(have_posts()) :
             </p>
         </div>
         <div class="generic-content">
-            <?php the_content(); ?>
+<!-- Here is using custom field for program body content to avoid WP_Query for searching in to it. -->
+<!-- The searching is only in Title field because the default body is empty. -->
+            <?php the_field('main_body_content'); ?>
         </div>
 
         <?php

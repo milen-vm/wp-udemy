@@ -31,7 +31,7 @@ function university_post_types()
     // Program post type
     register_post_type('program', [
         'supports' => [
-            'title', 'editor',
+            'title',    // support of default edditor is removed because is used custom field for the body content - main_body_content
         ],
         'rewrite' => [
             'slug' => 'programs',

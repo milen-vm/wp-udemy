@@ -171,7 +171,7 @@ class Search {
         })
         return
         $.when(
-            // do several asinc actions
+            // do several asinc actions - api requests
         ).then((resultOne, resultTwo, etc) => {
             // do something with the results
         }, () => {

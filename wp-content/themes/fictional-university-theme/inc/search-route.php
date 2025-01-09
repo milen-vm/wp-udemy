@@ -47,6 +47,7 @@ function universitySearchResults($data): array
             $data['image'] = get_the_post_thumbnail_url(null,'professorLandscape');
         } elseif ($postType === 'program') {
             $key = 'programs';
+            $data['id'] = get_the_ID();
         } elseif ($postType === 'event') {
             $key = 'events';
             $eventDate = new DateTime(get_field('event_date'));
@@ -60,7 +61,58 @@ function universitySearchResults($data): array
         array_push($results[$key], $data);
     }
 
+    $programsProfessors = getProfessorsForPrograms($results['programs']);
+    if($programsProfessors) {
+        $results['professors'] = array_merge($results['professors'], $programsProfessors);
+
+        $results['professors'] = array_values(
+            array_unique($results['professors'], SORT_REGULAR)
+        );
+    }
+
     return $results;
+}
+/**
+ * Searching for the professors related to given programs.
+ * 
+ * @param array $programs
+ * @return array
+ */
+function getProfessorsForPrograms(array $programs): array
+{
+    $metaQuery = [];
+    foreach($programs as $program) {
+        array_push($metaQuery, [
+            'key' => 'relalted_programs',
+            'compare' => 'LIKE',
+            'value' => '"' . $program['id'] . '"',
+        ]);
+    }
+
+    if(!$metaQuery) {
+        return [];
+    }
+
+    $metaQuery['relation'] = 'OR';
+    $professors = new WP_Query([
+        'post_type' => 'professor',
+        'meta_query' => $metaQuery,
+    ]);
+
+    $result = [];
+    while($professors->have_posts()) {
+        $professors->the_post();
+        $data = [
+            'title' => get_the_title(),
+            'permalink' => get_the_permalink(),
+            'postType' => 'professor',
+            'image' => get_the_post_thumbnail_url(null,'professorLandscape'),
+        ];
+
+        array_push($result, $data);
+    }
+
+    return $result;
 }
 
 add_action('rest_api_init', 'universityRegisterSearch');
