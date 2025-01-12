@@ -50,10 +50,7 @@ function universitySearchResults($data): array
             $data['id'] = get_the_ID();
         } elseif ($postType === 'event') {
             $key = 'events';
-            $eventDate = new DateTime(get_field('event_date'));
-            $data['month'] = $eventDate->format('M');
-            $data['day'] = $eventDate->format('d');
-            $data['description'] = has_excerpt() ? get_the_excerpt() : wp_trim_words(get_the_content(), 17);
+            $data = putEventData($data);
         } elseif($postType === 'campus') {
             $key = 'campuses';
         }
@@ -61,7 +58,8 @@ function universitySearchResults($data): array
         array_push($results[$key], $data);
     }
 
-    $programsProfessors = getProfessorsForPrograms($results['programs']);
+    [$programsProfessors, $programsEvents] = getProgramsRelatedItems($results['programs']);
+
     if($programsProfessors) {
         $results['professors'] = array_merge($results['professors'], $programsProfessors);
 
@@ -70,15 +68,38 @@ function universitySearchResults($data): array
         );
     }
 
+    if($programsEvents) {
+        $results['events'] = array_merge($results['events'], $programsEvents);
+
+        $results['events'] = array_values(
+            array_unique($results['events'], SORT_REGULAR)
+        );
+    }
+
     return $results;
 }
 /**
- * Searching for the professors related to given programs.
+ * Call function only if post type is event.
+ * 
+ * @param array $data
+ * @return array
+ */
+function putEventData(array $data): array
+{
+    $eventDate = new DateTime(get_field('event_date'));
+    $data['month'] = $eventDate->format('M');
+    $data['day'] = $eventDate->format('d');
+    $data['description'] = has_excerpt() ? get_the_excerpt() : wp_trim_words(get_the_content(), 17);
+
+    return $data;
+}
+/**
+ * Searching for the professors, events related to given programs.
  * 
  * @param array $programs
  * @return array
  */
-function getProfessorsForPrograms(array $programs): array
+function getProgramsRelatedItems(array $programs): array
 {
     $metaQuery = [];
     foreach($programs as $program) {
@@ -93,26 +114,37 @@ function getProfessorsForPrograms(array $programs): array
         return [];
     }
 
-    $metaQuery['relation'] = 'OR';
-    $professors = new WP_Query([
-        'post_type' => 'professor',
+    $metaQuery['relation'] = 'OR';      // condition in SQL: cond1 OR cond2 OR cond3 ...
+    $relatedItems = new WP_Query([
+        'post_type' => ['professor', 'event',],
         'meta_query' => $metaQuery,
     ]);
 
-    $result = [];
-    while($professors->have_posts()) {
-        $professors->the_post();
+    $professors = [];
+    $events = [];
+    while($relatedItems->have_posts()) {
+        $relatedItems->the_post();
+        $type = get_post_type();
+
         $data = [
             'title' => get_the_title(),
             'permalink' => get_the_permalink(),
-            'postType' => 'professor',
-            'image' => get_the_post_thumbnail_url(null,'professorLandscape'),
+            'postType' => $type,
         ];
 
-        array_push($result, $data);
+        if($type === 'professor') {
+            $data['image'] = get_the_post_thumbnail_url(null,'professorLandscape');
+            array_push($professors, $data);
+        }
+
+        if($type === 'event') {
+            $data = putEventData($data);
+            array_push($events, $data);
+        }
+
     }
 
-    return $result;
+    return [$professors, $events];
 }
 
 add_action('rest_api_init', 'universityRegisterSearch');

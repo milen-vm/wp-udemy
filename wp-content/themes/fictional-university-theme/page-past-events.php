@@ -7,7 +7,7 @@ pageBanner('Past Events', 'A recap ot our past events.');
     <?php
     $pastEvents = new WP_Query([
         'paged' => get_query_var('paged', 1),
-        'posts_per_page' => 1,
+        // 'posts_per_page' => 1,   // default is 10 items per page if is set to -1 shows all items
         'post_type' => 'event',
         'meta_key' => 'event_date',
         'orderby' => 'meta_value_num',
