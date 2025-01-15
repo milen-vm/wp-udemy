@@ -12,12 +12,12 @@ function universityRegisterSearch(): void
     ]);
 }
 
-function universitySearchResults($data): array
+function universitySearchResults($vars): array
 {
     // Key 'term' in $data array is a get parameter from api url.
     $mainQuery = new WP_Query([
         'post_type' => ['post', 'page', 'professor', 'program', 'event', 'campus',],
-        's' => sanitize_text_field($data['term']),  // search value
+        's' => sanitize_text_field($vars['term']),  // search value
     ]);
 
     $results = [
@@ -47,6 +47,18 @@ function universitySearchResults($data): array
             $data['image'] = get_the_post_thumbnail_url(null,'professorLandscape');
         } elseif ($postType === 'program') {
             $key = 'programs';
+            $relatedCampuses = get_field('related_campuses');
+
+            if($relatedCampuses) {
+                foreach($relatedCampuses as $campus) {
+                    array_push($results['campuses'], [
+                        'title' => get_the_title($campus),
+                        'permalink' => get_the_permalink($campus),
+                        'postType' => 'campus',
+                    ]);
+                }
+            }
+
             $data['id'] = get_the_ID();
         } elseif ($postType === 'event') {
             $key = 'events';
@@ -114,7 +126,7 @@ function getProgramsRelatedItems(array $programs): array
         return [];
     }
 
-    $metaQuery['relation'] = 'OR';      // condition in SQL: cond1 OR cond2 OR cond3 ...
+    $metaQuery['relation'] = 'OR';      // condition in SQL: cond1 OR cond2 OR cond3 ... Default is END
     $relatedItems = new WP_Query([
         'post_type' => ['professor', 'event',],
         'meta_query' => $metaQuery,
