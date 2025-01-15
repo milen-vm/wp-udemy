@@ -43,6 +43,8 @@ class Search {
         $('body').addClass('body-no-scroll')
         // Set timeout unitl overlay is fully showed/loaded
         setTimeout(() => this.#searchField.focus(), 300)
+
+        return false    // return false is for preventing to go on /search page. Search page is for when js is disabled on client browser.
     }
 
     closeOverlay() {
