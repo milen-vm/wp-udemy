@@ -43,7 +43,6 @@ while(have_posts()) :
                 <?php
                 while($programProfessors->have_posts()) :
                     $programProfessors->the_post();
-                    $eventDate = new DateTime(get_field('event_date'));
                 ?>
                     <li class="professor-card__list-item">
                         <a class="professor-card" href="<?php the_permalink(); ?>">
