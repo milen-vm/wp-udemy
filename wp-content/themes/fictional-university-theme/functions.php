@@ -2,6 +2,18 @@
 
 require_once get_theme_file_path('/inc/search-route.php');
 
+add_action('wp_enqueue_scripts', 'university_files');;
+
+add_action('after_setup_theme', 'university_fetures');
+
+add_action('pre_get_posts', 'university_ajust_queries');
+
+add_action('rest_api_init', 'university_custom_rest');
+
+add_action('admin_init', 'redirectSubscriberToFrontPage');
+
+add_action('wp_loaded', 'noSubscriberAdminBar');
+
 function university_files(): void
 {
     wp_enqueue_style('osm-styles', '//unpkg.com/leaflet@1.9.4/dist/leaflet.css');
@@ -95,13 +107,37 @@ function university_custom_rest(): void
     ]);
 }
 
-add_action('wp_enqueue_scripts', 'university_files');;
+/**
+ * Redirect user after login.
+ * 
+ * @return void
+ */
+function redirectSubscriberToFrontPage(): void
+{
+    $user = wp_get_current_user();
+    if(count($user->roles) === 1 && $user->roles[0] === 'subscriber') {
+        wp_redirect(site_url('/'));
 
-add_action('after_setup_theme', 'university_fetures');
+        exit;
+    }
+}
 
-add_action('pre_get_posts', 'university_ajust_queries');
+/**
+ * Hide admin bar for subscriber user role.
+ * 
+ * @return void
+ */
+function noSubscriberAdminBar(): void
+{
+    $user = wp_get_current_user();
+    if(count($user->roles) === 1 && $user->roles[0] === 'subscriber') {
+        show_admin_bar(false);
+    }
+}
 
-add_action('rest_api_init', 'university_custom_rest');
+/**
+ * CUSTOM APPLICATION FUNCTIONS
+ */
 
 /**
  * Adds Google api key to make working custom map field for Campus post type.
