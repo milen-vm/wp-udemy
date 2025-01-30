@@ -9,6 +9,8 @@ function university_post_types()
 
     // Event post type
     register_post_type('event', [
+        'capability_type' => 'event',   // this is needed for custom roles and permissions, for that post type
+        'map_meta_cap' => true,     // this is for adding event related premissions in order to manage events post type
         'supports' => [
             'title', 'editor', 'excerpt',       // supported fields, excerpt - short description field of the post
         ],
@@ -68,6 +70,8 @@ function university_post_types()
 
     // Campus post type
     register_post_type('campus', [
+        'capability_type' => 'campus',   // this is needed for custom roles and permissions, for that post type
+        'map_meta_cap' => true,     // this is for adding event related premissions in order to manage events post type
         'supports' => [
             'title', 'editor', 'excerpt',
         ],
