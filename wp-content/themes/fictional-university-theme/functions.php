@@ -3,16 +3,15 @@
 require_once get_theme_file_path('/inc/search-route.php');
 
 add_action('wp_enqueue_scripts', 'university_files');;
-
 add_action('after_setup_theme', 'university_fetures');
-
 add_action('pre_get_posts', 'university_ajust_queries');
-
 add_action('rest_api_init', 'university_custom_rest');
-
 add_action('admin_init', 'redirectSubscriberToFrontPage');
-
 add_action('wp_loaded', 'noSubscriberAdminBar');
+add_action('login_enqueue_scripts', 'ourLoginCss');
+// customize wp items
+add_filter('login_headerurl', 'ourHeaderUrl');
+add_filter('login_headertitle', 'ourLoginTitle');
 
 function university_files(): void
 {
@@ -133,6 +132,39 @@ function noSubscriberAdminBar(): void
     if(count($user->roles) === 1 && $user->roles[0] === 'subscriber') {
         show_admin_bar(false);
     }
+}
+
+/**
+ * Customize login screen
+ * 
+ * @return string
+ */
+function ourHeaderUrl(): string
+{
+    return esc_url(site_url('/'));
+}
+
+/**
+ * Add styles to wp login page.
+ * 
+ * @return void
+ */
+function ourLoginCss(): void
+{
+    wp_enqueue_style('custom-google-fonts', '//fonts.googleapis.com/css?family=Roboto+Condensed:300,300i,400,400i,700,700i|Roboto:100,300,400,400i,700,700i');
+    wp_enqueue_style('font_awesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
+    wp_enqueue_style('university_main_styles', get_theme_file_uri('/build/style-index.css'));
+    wp_enqueue_style('university_extra_styles', get_theme_file_uri('/build/index.css'));
+}
+
+/**
+ * Change login title.
+ * 
+ * @return string
+ */
+function ourLoginTitle(): string
+{
+    return get_bloginfo('name');
 }
 
 /**
