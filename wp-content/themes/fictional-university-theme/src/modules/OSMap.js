@@ -4,7 +4,7 @@ class OSMap {
 
     constructor() {
         if(!document.getElementById('acf-map')) {
-            return;
+            return
         }
 
         this.newMap('acf-map')

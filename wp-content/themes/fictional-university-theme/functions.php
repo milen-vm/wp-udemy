@@ -38,6 +38,7 @@ function university_files(): void
      */
     wp_localize_script('main-university-js', 'universityData', [
         'root_url' => get_site_url(),
+        'nonce' => wp_create_nonce('wp_rest'),   // "number used ones" - similar to login token, authorized token
     ]);
 }
 
