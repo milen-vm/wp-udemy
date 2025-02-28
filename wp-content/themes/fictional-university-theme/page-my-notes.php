@@ -15,7 +15,7 @@ while (have_posts()):
             $userNotes = new WP_Query([
                 'post_type' => 'note',
                 'post_per_page' => -1,      // returns all records in db
-                'author' => get_current_user_id(),
+                'author' => get_current_user_id(),      // gets records only for current user
             ]);
 
             while($userNotes->have_posts()) :
