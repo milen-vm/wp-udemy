@@ -93,6 +93,8 @@ function university_post_types()
 
     // Note post type
     register_post_type('note', [
+        'capability_type' => 'note',    // this is needed for custom roles and permissions, for that post type, if is not set is equal to blog post type permissions, must set up roles in admin
+        'map_meta_cap' => true,     // this is for adding event related premissions in order to manage events post type
         'supports' => [
             'title', 'editor', 'thumbnail',
         ],

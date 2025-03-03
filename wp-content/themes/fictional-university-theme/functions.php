@@ -12,6 +12,8 @@ add_action('login_enqueue_scripts', 'ourLoginCss');
 // customize wp items
 add_filter('login_headerurl', 'ourHeaderUrl');
 add_filter('login_headertitle', 'ourLoginTitle');
+// Force note post to be private.
+add_filter('wp_insert_post_data', 'makeNotePirivate');
 
 function university_files(): void
 {
@@ -246,4 +248,16 @@ function pageBanner(string $title = '', string $subtitle = '', string $backgroun
         </div>
     </div>
 <?php
+}
+
+/**
+ * Force note posts to be private.
+ */
+function makeNotePirivate($data): mixed
+{
+    if ($data['post_type'] === 'note' && $data['post_status'] !== 'trash') {
+        $data['post_status'] = 'private';
+    }
+
+    return $data;
 }

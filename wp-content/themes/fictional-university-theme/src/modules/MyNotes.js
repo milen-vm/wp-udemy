@@ -94,7 +94,8 @@ class MyNotes {
         let data = {
                 title: $('.new-note-title').val(),
                 content: $('.new-note-body').val(),
-                status: 'publish'   // or default is 'draft'
+                status: 'publish'   // or default is 'draft', 'publish' the data will be published immediately, 'private' visible only for the current user
+                                    // in this case the status value is overwritten in functions.php to be private
             }
 
         $.ajax({
