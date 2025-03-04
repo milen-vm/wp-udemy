@@ -28,7 +28,7 @@ while (have_posts()):
                 $userNotes->the_post();
             ?>
                 <li data-id="<?php the_ID() ?>">
-                    <input readonly class="note-title-field" type="text" value="<?php echo esc_attr(get_the_title()); ?>">
+                    <input readonly class="note-title-field" type="text" value="<?php echo str_replace(['Лична: ', 'Private: '], '', esc_attr(get_the_title())); ?>">
                     <span class="edit-note">
                         <i class="fa fa-pencil" aria-hidden="true"></i> Edit
                     </span>
@@ -36,7 +36,7 @@ while (have_posts()):
                         <i class="fa fa-trash-o" aria-hidden="true"></i> Delete
                     </span>
                     <!-- Because the note content is seved in db like html format wp_strip_all_tags removes all tags. -->
-                    <textarea readonly class="note-body-field" name="" id=""><?php echo esc_attr(wp_strip_all_tags(get_the_content())); ?></textarea>
+                    <textarea readonly class="note-body-field" name="" id=""><?php echo esc_textarea(wp_strip_all_tags(get_the_content())); ?></textarea>
                     <span class="update-note btn btn--blue btn--small">
                         <i class="fa fa-arrow-right" aria-hidden="true"></i> Save
                     </span>
