@@ -25,6 +25,9 @@ class MyNotes {
             type: 'DELETE',
             success: (response) => {
                 note.slideUp()
+                if(response.userNoteCount < 5) {
+                    $('.note-limit-message').removeClass('active')
+                }
             },
             error: (error) => {
                 console.log('error')
@@ -50,7 +53,6 @@ class MyNotes {
             .addClass('note-active-field')
 
         note.find('.update-note').addClass('update-note--visible')
-
         note.data('state', 'editable')
     }
 
@@ -62,7 +64,6 @@ class MyNotes {
             .removeClass('note-active-field')
 
         note.find('.update-note').removeClass('update-note--visible')
-
         note.data('state', 'cancel')
     }
 
@@ -124,6 +125,9 @@ class MyNotes {
                 `).prependTo('#my-notes').hide().slideDown()
             },
             error: (error) => {
+                if(error.responseText === 'No more notes allowed to write.') {
+                    $('.note-limit-message').addClass('active')
+                }
                 console.log('error')
                 console.log(error)
             }

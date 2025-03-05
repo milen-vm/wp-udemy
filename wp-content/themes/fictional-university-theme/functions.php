@@ -13,7 +13,9 @@ add_action('login_enqueue_scripts', 'ourLoginCss');
 add_filter('login_headerurl', 'ourHeaderUrl');
 add_filter('login_headertitle', 'ourLoginTitle');
 // Before save note actions.
-add_filter('wp_insert_post_data', 'beforeSaveNote');
+// priority is used when many functions is called for one hook
+// accepted_arg is for caunt of arguments in callback function
+add_filter('wp_insert_post_data', 'beforeSaveNote', 10, 2);
 
 function university_files(): void
 {
@@ -105,6 +107,12 @@ function university_custom_rest(): void
     register_rest_field('post', 'authorName', [
         'get_callback' => function() {
             return get_the_author();
+        }
+    ]);
+
+    register_rest_field('note', 'userNoteCount', [
+        'get_callback' => function() {
+            return count_user_posts(get_current_user_id(), 'note');
         }
     ]);
 }
@@ -253,11 +261,16 @@ function pageBanner(string $title = '', string $subtitle = '', string $backgroun
 /**
  * Force note posts to be private and sanitize.
  */
-function beforeSaveNote($data): mixed
+function beforeSaveNote($data, $post): mixed
 {
     if($data['post_type'] === 'note') {
         $data['post_content'] = sanitize_textarea_field($data['post_content']);
         $data['post_title'] = sanitize_text_field($data['post_title']);
+
+        $postId = isset($post['ID']) ? $post['ID'] : 0;
+        if(count_user_posts(get_current_user_id(), 'note') > 4 && $postId === 0) {
+            exit('No more notes allowed to write.');
+        }
     }
 
     if($data['post_type'] === 'note' && $data['post_status'] !== 'trash') {
