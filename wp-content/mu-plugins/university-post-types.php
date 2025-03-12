@@ -1,6 +1,6 @@
 <?php
 
-function university_post_types()
+function universityPostTypes()
 {
     /**
      * After every new post type permalinks must be updated.
@@ -96,7 +96,7 @@ function university_post_types()
         'capability_type' => 'note',    // this is needed for custom roles and permissions, for that post type, if is not set is equal to blog post type permissions, must set up roles in admin
         'map_meta_cap' => true,     // this is for adding event related premissions in order to manage events post type
         'supports' => [
-            'title', 'editor', 'thumbnail',
+            'title', 'editor',
         ],
         'public' => false,      // post type is private and specific for every user, not showing in public queries and search results
         'show_ui' => true,      // show in admin
@@ -110,6 +110,24 @@ function university_post_types()
         ],
         'menu_icon' => 'dashicons-welcome-write-blog',
     ]);
+
+    // Like post type
+    register_post_type('Like', [
+        'supports' => [
+            'title',
+        ],
+        'public' => false,      // post type is private and specific for every user, not showing in public queries and search results
+        'show_ui' => true,      // show in admin
+        'show_in_rest' => false,    // it will be implementet custom rest api for this post type
+        'labels' => [
+            'name' => 'Likes',
+            'add_new_item' => 'Add New Like',
+            'edit_item' => 'Edit Like',
+            'all_items' => 'All Likes',
+            'singular_name' => 'Like',
+        ],
+        'menu_icon' => 'dashicons-heart',
+    ]);
 }
 
-add_action('init', 'university_post_types');
+add_action('init', 'universityPostTypes');
