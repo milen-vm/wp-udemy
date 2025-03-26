@@ -112,7 +112,7 @@ function universityPostTypes()
     ]);
 
     // Like post type
-    register_post_type('Like', [
+    register_post_type('like', [
         'supports' => [
             'title',
         ],

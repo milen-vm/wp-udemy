@@ -13,38 +13,15 @@ while(have_posts()) :
                 </div>
                 <div class="two-thirds">
                     <?php
-                    $likes = new WP_Query([
-                        'post_type' => 'like',
-                        'meta_query' => [
-                            [
-                                'key' => 'liked_professor_id',
-                                'compare' => '=',
-                                'value' => get_the_ID(),
-                            ]
-                        ]
-                    ]);
-
-                    $status = 'no';
-                    foreach($likes->posts as $like) {
-                        $authorId = (int) $like->post_author;
-                        if($authorId === get_current_user_id()) {
-                            $status = 'yes';
-                        }
-                    }
-                    // query to check is the current user liked the professor
-                    // $exists = new WP_Query([
-                    //     'author' => get_current_user_id(),
-                    //     'post_type' => 'like',
-                    //     'meta_query' => [
-                    //         [
-                    //             'key' => 'liked_professor_id',
-                    //             'compare' => '=',
-                    //             'value' => get_the_ID(),
-                    //         ]
-                    //     ]
-                    // ]);
+                    $likes = getProfessorLikes(get_the_ID());
+                    $userLike = getCurrentUserLike($likes);
+                    $status = $userLike ? 'yes' : 'no';
                     ?>
-                    <span class="like-box" data-exists="<?php echo $status; ?>">
+                    <span class="like-box"
+                          data-like-id="<?php echo $userLike ? $userLike->ID : ''; ?>"
+                          data-professor-id="<?php the_ID(); ?>"
+                          data-exists="<?php echo $status; ?>"
+                    >
                         <i class="fa fa-heart-o" aria-hidden="true"></i>
                         <i class="fa fa-heart" aria-hidden="true"></i>
                         <span class="like-count"><?php echo $likes->found_posts; ?></span>

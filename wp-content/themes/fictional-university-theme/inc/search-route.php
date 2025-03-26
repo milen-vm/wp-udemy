@@ -9,6 +9,7 @@ function universityRegisterSearch(): void
     register_rest_route('university/v1', 'search', [
         'methods' => WP_REST_SERVER::READABLE,  // const for 'GET' method
         'callback' => 'universitySearchResults',
+        'permission_callback' => '__return_true',
     ]);
 }
 
