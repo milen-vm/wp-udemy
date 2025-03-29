@@ -8,14 +8,39 @@
   Author URI: https://abv.bg
 */
 
-add_filter('the_content', 'addToEndOfPost');
-
-function addToEndOfPost($content): string
+class WordCountAndTimePlugin
 {
-    if(is_single() && is_main_query()) {
 
-        return (string) $content . '<p>This is my Home.</p>';
+    public function __construct()
+    {
+        add_action('admin_menu', [$this, 'adminPage']);
     }
 
-    return $content;
+    public function adminPage()
+    {
+        /**
+         * 'manage_options' = admin
+         */
+        add_options_page('Word Count Settings', 'Word Count', 'manage_options', 'word-count-settings-page', [$this, 'html']);
+    }
+    
+    public function html()
+    { ?>
+        <div class="wprap">
+            <h1>Word Count Settings</h1>
+        </div>
+    <?php }
 }
+
+$wordCountAndTimePlugin = new WordCountAndTimePlugin();
+
+// add_filter('the_content', 'addToEndOfPost');
+// function addToEndOfPost($content): string
+// {
+//     if(is_single() && is_main_query()) {
+
+//         return (string) $content . '<p>This is my Home.</p>';
+//     }
+
+//     return $content;
+// }
