@@ -28,6 +28,7 @@ wp-config.php
 
 # Example plugin
 /wp-content/plugins/*
+!/wp-content/plugins/first-plugin
 
 # Uploads
 /wp-content/uploads/
