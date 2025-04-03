@@ -15,10 +15,70 @@ class WordCountAndTimePlugin
     {
         add_action('admin_menu', [$this, 'adminPage']);
         add_action('admin_init', [$this, 'settings']);
-        add_filter('the_content', [$this, 'ifWrap']);
+        add_filter('the_content', [$this, 'applayPlugin']);
     }
 
-    public function adminPage()
+    public function applayPlugin($content): string
+    {
+        if(
+            is_main_query() && is_single() &&
+            (
+                get_option('wcp_wordcount', '1') ||
+                get_option('wcp_charactercount', '1') ||
+                get_option('wcp_read_time', '1')
+            )
+        ) {
+
+            return $this->createHTML($content);
+        }
+
+        return $content;
+    }
+
+    public function createHTML(string $content): string
+    {
+        $html = '<h3>' . esc_html(get_option('wcp_headline', 'Post Statistics')) . '</h3><p>';
+        $wordCount = null;
+
+        if(
+            get_option('wcp_wordcount', '1') == '1' ||
+            get_option('wcp_read_time', '1') == '1'
+        ) {
+            $wordCount = $this->utf8WordCount(strip_tags($content));
+        }
+
+        if (get_option('wcp_wordcount', '1') == '1') {
+            $html .= 'This post has ' . $wordCount . ' words. <br/>';
+        }
+
+        if (get_option('wcp_charactercount', '1') == '1') {
+            $html .= 'This post has ' . mb_strlen(strip_tags($content)) . ' characters. <br/>';
+        }
+
+        if (get_option('wcp_read_time', '1') == '1') {
+            $html .= 'This post will take about ' . round($wordCount / 225) . ' minutes(s) to read. <br/>';
+        }
+
+        $html .= '</p>';
+
+        if(get_option('wcp_location', '0') == '0') {
+
+            return $html . $content;
+        }
+
+        return $content . $html;
+    }
+
+    private function utf8WordCount($string): int
+    {
+        $string = preg_replace('/[\p{P}\p{S}]+/u', '', $string);
+        // For large strings, you can optimize the performance by using the preg_match_all function to count the words instead of splitting the string
+        $words = preg_split('/\s+/', trim($string));
+
+        return count($words);
+    }
+
+    public function adminPage(): void
     {
         /**
          * 'manage_options' = admin
