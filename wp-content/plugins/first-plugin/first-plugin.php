@@ -6,6 +6,8 @@
   Version: 1.0
   Author: Home
   Author URI: https://abv.bg
+  Text Domain: wcpdomain
+  Domain Path: /languages
 */
 
 class WordCountAndTimePlugin
@@ -16,6 +18,12 @@ class WordCountAndTimePlugin
         add_action('admin_menu', [$this, 'adminPage']);
         add_action('admin_init', [$this, 'settings']);
         add_filter('the_content', [$this, 'applayPlugin']);
+        add_action('init', [$this, 'languages']);
+    }
+
+    public function languages()
+    {
+        load_plugin_textdomain('wcpdomain', false, dirname(plugin_basename(__FILE__)) . '/languages');
     }
 
     public function applayPlugin($content): string
@@ -48,11 +56,13 @@ class WordCountAndTimePlugin
         }
 
         if (get_option('wcp_wordcount', '1') == '1') {
-            $html .= 'This post has ' . $wordCount . ' words. <br/>';
+            $html .= __('This post has', 'wcpdomain') . 
+                ' ' . $wordCount . ' ' . esc_html__('words', 'wcpdomain') . '. <br/>';
         }
 
         if (get_option('wcp_charactercount', '1') == '1') {
-            $html .= 'This post has ' . mb_strlen(strip_tags($content)) . ' characters. <br/>';
+            $html .= __('This post has', 'wcpdomain') .
+                ' ' . mb_strlen(strip_tags($content)) . ' ' . __('characters', 'wcpdomain') . '. <br/>';
         }
 
         if (get_option('wcp_read_time', '1') == '1') {
@@ -69,7 +79,7 @@ class WordCountAndTimePlugin
         return $content . $html;
     }
 
-    private function utf8WordCount($string): int
+    private function utf8WordCount(string $string): int
     {
         $string = preg_replace('/[\p{P}\p{S}]+/u', '', $string);
         // For large strings, you can optimize the performance by using the preg_match_all function to count the words instead of splitting the string
@@ -83,7 +93,7 @@ class WordCountAndTimePlugin
         /**
          * 'manage_options' = admin
          */
-        add_options_page('Word Count Settings', 'Word Count', 'manage_options', 'word-count-settings-page', [$this, 'html']);
+        add_options_page('Word Count Settings', __('Word Count', 'wcpdomain'), 'manage_options', 'word-count-settings-page', [$this, 'html']);
     }
     
     public function html()
