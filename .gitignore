@@ -29,6 +29,7 @@ wp-config.php
 # Example plugin
 /wp-content/plugins/*
 !/wp-content/plugins/first-plugin
+!/wp-content/plugins/word-filter-plugin
 
 # Uploads
 /wp-content/uploads/
