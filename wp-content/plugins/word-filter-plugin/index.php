@@ -18,6 +18,8 @@ class WordFilterPlugin
     public function __construct()
     {
         add_action('admin_menu', [$this, 'menu']);
+        add_filter('the_content', [$this, 'filterLogic']);
+        add_action('admin_init', [$this, 'settings']);
     }
 
     public function menu()
@@ -56,29 +58,99 @@ class WordFilterPlugin
         add_action('load-' . $pageHook, [$this, 'pageAssets']);
     }
 
+    public function filterLogic($content): string
+    {
+        $option = get_option('plugin_words_to_filter');
+        if(!$option) {
+
+            return $content;
+        }
+
+        $words = array_map('trim', explode(',', $option));
+        $content = str_ireplace($words, get_option('replacementText', '****'), $content);
+
+        return $content;
+    }
+
     public function pageAssets()
     {
         wp_enqueue_style('fileterAdminCss', plugin_dir_url(__FILE__) . 'styles.css');
     }
 
-    public function optionsSubPage()
-    { ?>
-456
-    <?php }
-
     public function wordFilterPage()
     { ?>
         <div class="wrap">
             <h1>Word Filter</h1>
-            <form method="POST"></form>
-            <label for="plugin_words_to_filter">
-                <p>Enter a <strong>coma-separated</strong> list of words to filter from your site's content.</p>
-            </label>
-            <div class="word-filter__flex-container">
-                <textarea name="plugin_words_to_filter" id="plugin_words_to_filter"></textarea>
-            </div>
-            <input type="submit" name="submit" id="submit" class="button button-primary" value="Save Changes">
+            <?php if(isset($_POST['just-submitted'])) $this->handleform(); ?>
+            <form method="POST">
+                <input type="hidden" name="just-submitted" value="true" />
+                <?php wp_nonce_field('saveFilterWords', 'filterNonce'); ?>
+                <label for="plugin_words_to_filter">
+                    <p>Enter a <strong>coma-separated</strong> list of words to filter from your site's content.</p>
+                </label>
+                <div class="word-filter__flex-container">
+                    <textarea name="plugin_words_to_filter" id="plugin_words_to_filter"><?php echo esc_textarea(get_option('plugin_words_to_filter')) ?></textarea>
+                </div>
+                <input type="submit" name="submit" id="submit" class="button button-primary" value="Save Changes">
+            </form>
         </div>
+    <?php }
+
+    public function handleForm()
+    {
+        if(
+            !isset($_POST['filterNonce']) ||
+            !wp_verify_nonce($_POST['filterNonce'], 'saveFilterWords') ||
+            !current_user_can('manage_options')
+        ) { ?>
+            <div class="error">
+                <p>You do not have permission to perform that action!</p>
+            </div>
+        <?php 
+            return;
+        }
+
+        update_option('plugin_words_to_filter', sanitize_text_field($_POST['plugin_words_to_filter'])); 
+    ?>
+        <div class="updated">
+            <p>Your filtered word were saved.</p>
+        </div>
+        
+    <?php }
+
+    public function optionsSubPage()
+    { ?>
+        <div class="wrap">
+            <h1>Word Filter Options</h1>
+            <form action="options.php" method="POST">
+                <?php
+                settings_errors();
+                settings_fields('replacementFields');
+                do_settings_sections('word-filter-options');
+                submit_button();
+                ?>
+            </form>
+        </div>
+    <?php }
+
+    public function settings()
+    {
+        // page argument is the slug of the page
+        add_settings_section('replacement-text-section', null, null, 'word-filter-options');
+        register_setting('replacementFields', 'replacementText');
+        add_settings_field(
+            'replacement-text',
+            'Filtered Text',
+            [$this, 'replacementFieldHTML'],
+            'word-filter-options',
+            'replacement-text-section'
+        );
+    }
+
+    public function replacementFieldHTML()
+    { ?>
+        <input type="text" name="replacementText" id="replacementText" value="<?php echo esc_attr(get_option('replacementText', '***')) ?>" />
+        <p class="description">Leave blank to simply remove filtered words.</p>
     <?php }
 }
 
