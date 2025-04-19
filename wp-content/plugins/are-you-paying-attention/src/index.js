@@ -6,10 +6,21 @@ wp.blocks.registerBlockType('myplugin/are-you-paying-attention', {
     edit: () => {
         // Every html element must be created by this method.
         // Shown in editor.
-        return wp.element.createElement('h3', null, 'Test Admin')
+        // return wp.element.createElement('h3', null, 'Test Admin')
+        return (
+            <div>
+                <p>Hi, paragraph</p>
+                <h4>heading 4</h4>
+            </div>
+        )
     },
     save: () => {
         // Shown on front end (site page)
-        return wp.element.createElement('h1', null, 'Test Front end')
+        return (
+            <>
+            <h2>h2</h2>
+            <h3>h3</h3>
+            </>
+        )
     }
 })
