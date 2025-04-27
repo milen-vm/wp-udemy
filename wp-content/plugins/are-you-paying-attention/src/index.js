@@ -6,18 +6,18 @@ wp.blocks.registerBlockType('myplugin/are-you-paying-attention', {
     attributes: {
         skyColor: {
             type: 'string',
-            source: 'text',
-            selector: '.skyColor'
+            // source: 'text',
+            // selector: '.skyColor'
         },
         grassColor: {
             type: 'string',
-            source: 'text',
-            selector: '.grassColor'
+            // source: 'text',
+            // selector: '.grassColor'
         }
     },
     edit: (props) => {
-        // Every html element must be created by this method.
         // Shown in editor.
+        // Every html element must be created by this method.
         // return wp.element.createElement('h3', null, 'Test Admin')
 
         function updateSkyColor(event) {
@@ -39,12 +39,64 @@ wp.blocks.registerBlockType('myplugin/are-you-paying-attention', {
         // Shown on front end (site page)
         /**
          * The span and the css class are needed for React to extract values of two props from the text
-         * saved in database as html string.
+         * saved in database as html string. This is not mandatory and can be removed. In that way WP saves
+         * values of pros as coment in html. The 'source' and 'selector' must be removed. This way is better.
          */
-        return (
-            <>
-            <p>Today the sky is <span className="skyColor">{props.attributes.skyColor}</span> and grass is <span className="grassColor">{props.attributes.grassColor}</span>.</p>
-            </>
-        )
+        return null     // when return null no static html saved in db
     }
+    // array of objects of old versions, to avoid a error whit old data in db on changing html format or someting other
+    // every time when html is changed, must add new object to deprecated array
+    // deprecated: [
+    //     {
+    //         attributes: {
+    //             skyColor: {
+    //                 type: 'string',
+    //             },
+    //             grassColor: {
+    //                 type: 'string',
+    //             }
+    //         },
+    //         save: (props) => {
+    //             return (
+    //                 <>
+    //                 <h6>Today the sky is compleatly <span className="skyColor">{props.attributes.skyColor}</span> and grass is <span className="grassColor">{props.attributes.grassColor}</span>.</h6>
+    //                 </>
+    //             )
+    //         },
+    //     },
+    //     {
+    //         attributes: {
+    //             skyColor: {
+    //                 type: 'string',
+    //             },
+    //             grassColor: {
+    //                 type: 'string',
+    //             }
+    //         },
+    //         save: (props) => {
+    //             return (
+    //                 <>
+    //                 <h3>Today the sky is <span className="skyColor">{props.attributes.skyColor}</span> and grass is <span className="grassColor">{props.attributes.grassColor}</span>.</h3>
+    //                 </>
+    //             )
+    //         },
+    //     },
+    //     {
+    //         attributes: {
+    //             skyColor: {
+    //                 type: 'string',
+    //             },
+    //             grassColor: {
+    //                 type: 'string',
+    //             }
+    //         },
+    //         save: (props) => {
+    //             return (
+    //                 <>
+    //                 <p>Today the sky is <span className="skyColor">{props.attributes.skyColor}</span> and grass is <span className="grassColor">{props.attributes.grassColor}</span>.</p>
+    //                 </>
+    //             )
+    //         }
+    //     }
+    // ]
 })

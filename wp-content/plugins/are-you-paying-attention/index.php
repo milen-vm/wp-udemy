@@ -17,12 +17,27 @@ class AreYouPayingAttention
 
     public function __construct()
     {
-        add_action('enqueue_block_editor_assets', [$this, 'adminAssets']);
+        // add_action('enqueue_block_editor_assets', [$this, 'adminAssets']);
+        add_action('init', [$this, 'adminAssets']);
     }
 
     public function adminAssets()
     {
-        wp_enqueue_script('newBlockType', plugin_dir_url(__FILE__) . 'build/index.js', ['wp-blocks', 'wp-element',]);
+        // wp_enqueue_script('newBlockType', plugin_dir_url(__FILE__) . 'build/index.js', ['wp-blocks', 'wp-element',]);
+        wp_register_script('newBlockType', plugin_dir_url(__FILE__) . 'build/index.js', ['wp-blocks', 'wp-element',]);
+        register_block_type('myplugin/are-you-paying-attention', [
+            'editor_script' => 'newBlockType',
+            'render_callback' => [$this, 'theHTML']
+        ]);
+    }
+
+    public function theHTML(array $attributes): string
+    {
+        ob_start();
+?>
+<p>Today the sky is <?php echo esc_html($attributes['skyColor']); ?> and the grass is <?php echo esc_html($attributes['grassColor']); ?> !!!!</p>
+<?php
+        return ob_get_clean();
     }
 }
 
