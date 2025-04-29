@@ -23,10 +23,13 @@ class AreYouPayingAttention
 
     public function adminAssets()
     {
+        wp_register_style('quizeEditCss', plugin_dir_url(__FILE__) . 'build/index.css');
         // wp_enqueue_script('newBlockType', plugin_dir_url(__FILE__) . 'build/index.js', ['wp-blocks', 'wp-element',]);
-        wp_register_script('newBlockType', plugin_dir_url(__FILE__) . 'build/index.js', ['wp-blocks', 'wp-element',]);
+        // deps parameter is dependencies that are needed for javascript code
+        wp_register_script('newBlockType', plugin_dir_url(__FILE__) . 'build/index.js', ['wp-blocks', 'wp-element', 'wp-editor']);
         register_block_type('myplugin/are-you-paying-attention', [
-            'editor_script' => 'newBlockType',
+            'editor_script' => 'newBlockType',  // use this js for that block
+            'editor_style' => 'quizeEditCss',   // use this css for that block
             'render_callback' => [$this, 'theHTML']
         ]);
     }
