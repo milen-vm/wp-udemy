@@ -7,15 +7,14 @@ wp.blocks.registerBlockType('myplugin/are-you-paying-attention', {
     icon: 'smiley',
     category: 'common',
     attributes: {
-        skyColor: {
+        question: {
             type: 'string',
             // source: 'text',
             // selector: '.skyColor'
         },
-        grassColor: {
-            type: 'string',
-            // source: 'text',
-            // selector: '.grassColor'
+        answers: {
+            type: 'array',
+            default: ['', 'blue']
         }
     },
     edit: EditComponent,
@@ -90,31 +89,47 @@ function EditComponent(props) {
     // Every html element must be created by this method.
     // return wp.element.createElement('h3', null, 'Test Admin')
 
-    function updateSkyColor(event) {
-        props.setAttributes({skyColor: event.target.value})
+    function updateQuestion(value) {
+        props.setAttributes({question: value})
     }
 
-    function updateGrassColor(event) {
-        props.setAttributes({grassColor: event.target.value})
+    function deleteAnswer(index) {
+        const answers = props.attributes.answers.filter((val, i) => {
+            return i != index
+        })
+
+        props.setAttributes({answers: answers})
     }
 
     return (
         <div className="paying-attention-edit-block">
-            <TextControl label="Question:" />
-            <p>Answers:</p>
-            <Flex>
-                <FlexBlock>
-                    <TextControl />
-                </FlexBlock>
-                <FlexItem>
-                    <Button>
-                        <Icon icon="star-empty" />
-                    </Button>
-                </FlexItem>
-                <FlexItem>
-                    <Button>Delete</Button>
-                </FlexItem>
-            </Flex>
+            <TextControl label="Question:" value={props.attributes.question} onChange={updateQuestion} style={{fontSize: '20px'}} />
+            <p style={{fontSize: '13px', margin: '20px 0 8px 0'}}>Answers:</p>
+            {props.attributes.answers.map((answer, index) => {
+
+                return (
+                    <Flex>
+                        <FlexBlock>
+                            <TextControl value={answer} onChange={newValue => {
+                                const answers = props.attributes.answers.concat([])
+                                answers[index] = newValue
+                                props.setAttributes({answers: answers})
+                            }} />
+                        </FlexBlock>
+                        <FlexItem>
+                            <Button>
+                                <Icon className="mark-as-correct" icon="star-empty" />
+                            </Button>
+                        </FlexItem>
+                        <FlexItem>
+                            <Button isLink className="attention-delete" onClick={() => deleteAnswer(index)}>Delete</Button>
+                        </FlexItem>
+                    </Flex>
+                )
+            })}
+            <Button isPrimary onClick={() => {
+                props.setAttributes({answers: props.attributes.answers.concat([''])})
+            }}>Add another answer</Button>
         </div>
     )
 }
